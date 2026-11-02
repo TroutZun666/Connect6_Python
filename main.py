@@ -3,6 +3,13 @@ import pygame,sys
 WIDTH = 950
 HEIGHT = 950
 
+class Piece:
+    def __init__(self,screen):
+        self.screen = screen
+
+    def draw(self,color,pos):
+        pygame.draw.circle(self.screen,color,pos,23)
+
 def draw(screen):
     screen.fill("#DEB887")
 
@@ -11,22 +18,31 @@ def draw(screen):
     for j in range(19):
         pygame.draw.line(screen,"#8B5A2B",(25,25+j*50),(WIDTH-25,25+j*50),3)
 
-
 def main():
     pygame.init()
 
     screen = pygame.display.set_mode((WIDTH,HEIGHT))
     pygame.display.set_caption("Connect6")
 
+    clock = pygame.time.Clock()
+
+    piece = Piece(screen)
+
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                pos = list(pygame.mouse.get_pos())
+                pos[0] = round((pos[0] - 25) / 50) * 50 + 25
+                pos[1] = round((pos[1] - 25) / 50) * 50 + 25
+                piece.draw("white",tuple(pos))
 
-        draw(screen)
+        #draw(screen)
 
         pygame.display.update()
+        clock.tick(60)
 
 if __name__ == "__main__":
     main()
