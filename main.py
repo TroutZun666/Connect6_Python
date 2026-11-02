@@ -25,10 +25,10 @@ def draw(screen,piece):
     for i in range(19):
         for j in range(19):
             if board[i][j] == 1:
-                pos = (i*50+25,j*50+25)
+                pos = (j*50+25,i*50+25)
                 piece.draw("black",pos)
             elif board[i][j] == 2:
-                pos = (i*50+25,j*50+25)
+                pos = (j*50+25,i*50+25)
                 piece.draw("white",pos)
 
 def main():
@@ -53,11 +53,11 @@ def main():
                 gx = round((pos[0] - 25) / 50)
                 gy = round((pos[1] - 25) / 50)
 
-                if COLOR == 1 and board[gx][gy] == 0:
-                    board[gx][gy] = 1
+                if COLOR == 1 and board[gy][gx] == 0:
+                    board[gy][gx] = 1
                     COLOR = 2
-                elif COLOR == 2 and board[gx][gy] == 0:
-                    board[gx][gy] = 2
+                elif COLOR == 2 and board[gy][gx] == 0:
+                    board[gy][gx] = 2
                     COLOR = 1
 
         draw(screen,piece)
