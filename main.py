@@ -48,34 +48,45 @@ def draw(screen,piece):
         screen.blit(text1,text_rect1)
         screen.blit(text2,text_rect2)
 
-def check():
+def check(is_first):
     global game
+    if is_first:
+        is_draw = False
+    else:
+        is_draw = True
+
     for i in range(19):
         for j in range(19):
+            if not board[i][j]:
+                is_draw = False
             if board[i][j]:
                 if j + 5 < 19: 
                     # 判断横向是否连成一线
                     if board[i][j] == board[i][j+1] == board[i][j+2] == board[i][j+3] == board[i][j+4] == board[i][j+5]:
                         game = False
-                        break
+                        return
                 if i + 5 < 19:
                     # 判断竖向是否连成一线
                     if board[i][j] == board[i+1][j] == board[i+2][j] == board[i+3][j] == board[i+4][j] == board[i+5][j]:
                         game = False
-                        break
+                        return
                 if i + 5 < 19 and j + 5 < 19:
                     # 判断斜向是否连成一线
                     if board[i][j] == board[i+1][j+1] == board[i+2][j+2] == board[i+3][j+3] == board[i+4][j+4] == board[i+5][j+5]:
                         game = False
-                        break
+                        return
                 if i + 5 < 19 and j - 5 >= 0:
                     # 判断斜向是否连成一线
                     if board[i][j] == board[i+1][j-1] == board[i+2][j-2] == board[i+3][j-3] == board[i+4][j-4] == board[i+5][j-5]:
                         game = False
-                        break
+                        return
+
+    if is_draw:
+        game = False
 
 def main():
     global game,color,board
+    is_first = True
 
     pygame.init()
 
@@ -91,20 +102,31 @@ def main():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            
             if event.type == pygame.MOUSEBUTTONDOWN and game:
                 pos = pygame.mouse.get_pos()
                 gx = round((pos[0] - 25) / 50)
                 gy = round((pos[1] - 25) / 50)
 
-                if 0 <= gx <= 19 and 0 <= gy <= 19: 
-                    if color == 1 and board[gy][gx] == 0:
+                if 0 <= gx < 19 and 0 <= gy < 19:
+                    if color == 1 and board[gy][gx] == 0 and is_first:
+                        is_first = False
+                        color = 3
                         board[gy][gx] = 1
-                        color = 2
-                    elif color == 2 and board[gy][gx] == 0:
-                        board[gy][gx] = 2
+                    elif color == 1 or color == 2:
+                        if board[gy][gx] == 0 and not is_first:
+                            board[gy][gx] = 1
+                            color += 1
+                    elif color == 3 or color == 4:
+                        if board[gy][gx] == 0 and not is_first:
+                            board[gy][gx] = 2
+                            color += 1
+                    if color > 4:
                         color = 1
+            
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
+                if event.key == pygame.K_SPACE or event.key == pygame.K_r:
+                    is_first = True
                     game = True
                     color = 1
                     board = []
@@ -113,7 +135,7 @@ def main():
 
         draw(screen,piece)
         if game:
-            check()
+            check(is_first)
 
         pygame.display.update()
         clock.tick(60)
